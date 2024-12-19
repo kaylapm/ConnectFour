@@ -33,7 +33,7 @@ public class Cell {
 
     public void animate() {
         if (animationY < row * SIZE + PADDING) {
-            animationY += 5; // Adjust speed as needed
+            animationY += 10; // Adjust speed as needed
         }
     }
 

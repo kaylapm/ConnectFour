@@ -222,6 +222,15 @@ public class ConnectFour extends JPanel {
         // Create a panel for buttons with FlowLayout
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
+        // Add New Game button
+        JButton newGameButton = new JButton("New Game");
+        styleButton(newGameButton);
+        newGameButton.addActionListener(e -> {
+            newGame();
+            startTimer(); // Restart the timer for the new game
+        });
+        buttonPanel.add(newGameButton);
+
         // Add Quit Game button
         JButton quitButton = new JButton("Quit Game");
         styleButton(quitButton);
