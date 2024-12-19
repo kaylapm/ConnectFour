@@ -57,6 +57,7 @@ public class Board extends JPanel {
     public State stepGame(Seed player, int selectedRow, int selectedCol) {
         // Update game board
         cells[selectedRow][selectedCol].content = player;
+        cells[selectedRow][selectedCol].resetAnimation(); // Use the new method
 
         // Check for a win condition
         if (checkWin(player, selectedRow, selectedCol)) {
