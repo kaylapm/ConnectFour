@@ -52,8 +52,11 @@ public class ConnectFour extends JPanel {
         add(mainPanel, BorderLayout.CENTER);
 
         cardLayout.show(mainPanel, "Welcome");
-
         soundEffect.initGame(); // Pre-load sound files
+
+        if (isMusicEnabled) {
+            soundEffect.BACKSOUND.loop(); // Start playing the background sound
+        }
     }
 
     private void initWelcomePanel() {
@@ -62,7 +65,7 @@ public class ConnectFour extends JPanel {
         JLabel backgroundLabel = new JLabel(backgroundIcon);
         backgroundLabel.setLayout(new GridBagLayout());
 
-        JLabel welcomeLabel = new JLabel("Welcome to Connect Four!", SwingConstants.CENTER);
+        JLabel welcomeLabel = new JLabel(" ", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -72,7 +75,7 @@ public class ConnectFour extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         backgroundLabel.add(welcomeLabel, gbc);
 
-        JButton startButton = new JButton("Start Game");
+        JButton startButton = new JButton(" ");
         styleButton(startButton);
         startButton.setPreferredSize(new Dimension(180, 100));
         startButton.setOpaque(false);
@@ -89,10 +92,16 @@ public class ConnectFour extends JPanel {
         gbc.insets = new Insets(500, 150, 10, 50);
         backgroundLabel.add(startButton, gbc);
 
+
         JButton musicButton = new JButton(isMusicEnabled ? "Music On" : "Music Off");
         musicButton.addActionListener(e -> {
             isMusicEnabled = !isMusicEnabled;
             musicButton.setText(isMusicEnabled ? "Music On" : "Music Off");
+            if (isMusicEnabled) {
+                soundEffect.BACKSOUND.loop();
+            } else {
+                soundEffect.BACKSOUND.stop();
+            }
         });
         musicButton.setPreferredSize(new Dimension(100, 200));
         gbc.gridy = 2;
@@ -107,7 +116,11 @@ public class ConnectFour extends JPanel {
     }
 
     private void initPlayerNamePanel() {
-        playerNamePanel = new JPanel(new GridBagLayout());
+        playerNamePanel = new JPanel(new BorderLayout());
+        ImageIcon backgroundIcon = new ImageIcon("src/images/player.png");
+        JLabel backgroundLabel = new JLabel(backgroundIcon);
+        backgroundLabel.setLayout(new GridBagLayout());
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
@@ -129,18 +142,20 @@ public class ConnectFour extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        playerNamePanel.add(player1Label, gbc);
+        backgroundLabel.add(player1Label, gbc);
         gbc.gridx = 1;
-        playerNamePanel.add(player1Field, gbc);
+        backgroundLabel.add(player1Field, gbc);
         gbc.gridx = 0;
         gbc.gridy = 1;
-        playerNamePanel.add(player2Label, gbc);
+        backgroundLabel.add(player2Label, gbc);
         gbc.gridx = 1;
-        playerNamePanel.add(player2Field, gbc);
+        backgroundLabel.add(player2Field, gbc);
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
-        playerNamePanel.add(proceedButton, gbc);
+        backgroundLabel.add(proceedButton, gbc);
+
+        playerNamePanel.add(backgroundLabel, BorderLayout.CENTER);
     }
 
     private JPanel createGamePanel() {

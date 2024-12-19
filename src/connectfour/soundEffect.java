@@ -17,53 +17,54 @@ import java.net.URL;
  */
 public enum soundEffect {
     EAT_FOOD("audio/mouse click.wav"),
-    BACKSOUND("audio/mouse click.wav"),
-    WIN ("audio/violin-win-5-185128.wav"),
+    BACKSOUND("audio/backsound.wav"), // Update to use backsound.wav
+    WIN("audio/violin-win-5-185128.wav"),
     DIE("audio/game-die.wav");
 
-    /** Nested enumeration for specifying volume */
     public static enum Volume {
         MUTE, LOW, MEDIUM, HIGH
     }
 
     public static Volume volume = Volume.LOW;
 
-    /** Each sound effect has its own clip, loaded with its own sound file. */
     private Clip clip;
 
-    /** Private Constructor to construct each element of the enum with its own sound file. */
     private soundEffect(String soundFileName) {
         try {
-            // Use URL (instead of File) to read from disk and JAR.
             URL url = this.getClass().getClassLoader().getResource(soundFileName);
-            // Set up an audio input stream piped from the sound file.
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
-            // Get a clip resource.
             clip = AudioSystem.getClip();
-            // Open audio clip and load samples from the audio input stream.
             clip.open(audioInputStream);
-        } catch (UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (LineUnavailableException e) {
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
     }
 
-    /** Play or Re-play the sound effect from the beginning, by rewinding. */
     public void play() {
         if (volume != Volume.MUTE) {
             if (clip.isRunning())
-                clip.stop();   // Stop the player if it is still running
-            clip.setFramePosition(0); // rewind to the beginning
-            clip.start();     // Start playing
+                clip.stop();
+            clip.setFramePosition(0);
+            clip.start();
         }
     }
 
-    /** Optional static method to pre-load all the sound files. */
+    public void loop() {
+        if (volume != Volume.MUTE) {
+            if (clip.isRunning())
+                clip.stop();
+            clip.setFramePosition(0);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
+    }
+
+    public void stop() {
+        if (clip.isRunning()) {
+            clip.stop();
+        }
+    }
+
     static void initGame() {
-        values(); // calls the constructor for all the elements
+        values();
     }
 }
-
