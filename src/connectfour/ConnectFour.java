@@ -279,3 +279,4 @@ public class ConnectFour extends JPanel {
         });
     }
 }
+
