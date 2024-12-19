@@ -1,10 +1,12 @@
 package connectfour;
 
+import javax.swing.*;
 import java.awt.*;
+
 /**
  * The Board class models the ROWS-by-COLS game board.
  */
-public class Board {
+public class Board extends JPanel {
     // Define named constants
     public static final int ROWS = 6;  // ROWS x COLS cells
     public static final int COLS = 7;
@@ -22,6 +24,7 @@ public class Board {
 
     /** Constructor to initialize the game board */
     public Board() {
+        setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
         initGame();
     }
 
@@ -105,7 +108,9 @@ public class Board {
     }
 
     /** Paint itself on the graphics canvas, given the Graphics context */
-    public void paint(Graphics g) {
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         // Draw the grid-lines
         g.setColor(COLOR_GRID);
         for (int row = 1; row < ROWS; ++row) {

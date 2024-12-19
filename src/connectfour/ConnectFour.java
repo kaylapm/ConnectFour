@@ -4,48 +4,130 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-/**
- * Tic-Tac-Toe: Two-player Graphic version with better OO design.
- * The Board and Cell classes are separated in their own classes.
- */
-public class ConnectFour extends JPanel {
-    private static final long serialVersionUID = 1L; // to prevent serializable warning
 
-    // Define named constants for the drawing graphics
-    public static final String TITLE = "Tic Tac Toe";
+public class ConnectFour extends JPanel {
+    private static final long serialVersionUID = 1L;
+
+    public static final String TITLE = "Connect Four";
     public static final Color COLOR_BG = Color.WHITE;
     public static final Color COLOR_BG_STATUS = new Color(216, 216, 216);
-    public static final Color COLOR_CROSS = new Color(239, 105, 80);  // Red #EF6950
-    public static final Color COLOR_NOUGHT = new Color(64, 154, 225); // Blue #409AE1
+    public static final Color COLOR_CROSS = new Color(239, 105, 80);
+    public static final Color COLOR_NOUGHT = new Color(64, 154, 225);
     public static final Font FONT_STATUS = new Font("OCR A Extended", Font.PLAIN, 14);
 
-    // Define game objects
-    private Board board;         // the game board
-    private State currentState;  // the current state of the game
-    private Seed currentPlayer;  // the current player
-    private JLabel statusBar;    // for displaying status message
+    private Board board;
+    private State currentState;
+    private Seed currentPlayer;
+    private JLabel statusBar;
     private CardLayout cardLayout;
     private JPanel mainPanel;
+    private JPanel welcomePanel;
+    private boolean isMusicEnabled = true;
 
-    /** Constructor to setup the UI and game components */
     public ConnectFour() {
-        super.addMouseListener(new MouseAdapter() {
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+
+        initWelcomePanel();
+        JPanel gamePanel = createGamePanel();
+
+        mainPanel.add(welcomePanel, "Welcome");
+        mainPanel.add(gamePanel, "Game");
+
+        setLayout(new BorderLayout());
+        add(mainPanel, BorderLayout.CENTER);
+
+        cardLayout.show(mainPanel, "Welcome");
+
+        soundEffect.initGame(); // Pre-load sound files
+    }
+
+    private void initWelcomePanel() {
+        welcomePanel = new JPanel(new BorderLayout());
+        ImageIcon backgroundIcon = new ImageIcon("src/images/welcome.png");
+        JLabel backgroundLabel = new JLabel(backgroundIcon);
+        backgroundLabel.setLayout(new GridBagLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to Connect Four!", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 10, 10, 40);
+        gbc.anchor = GridBagConstraints.CENTER;
+        backgroundLabel.add(welcomeLabel, gbc);
+
+        JButton startButton = new JButton("Start Game");
+        styleButton(startButton);
+        startButton.setPreferredSize(new Dimension(180, 100));
+        startButton.setOpaque(false);
+        startButton.setContentAreaFilled(false);
+        startButton.setBorderPainted(false);
+        startButton.setFocusPainted(false);
+        startButton.addActionListener(e -> {
+            if (isMusicEnabled) {
+                soundEffect.BACKSOUND.play();
+            }
+            cardLayout.show(mainPanel, "Game");
+            newGame();
+            mainPanel.revalidate();
+            mainPanel.repaint(); // Ensure the game panel is repainted
+        });
+
+        gbc.gridy = 1;
+        gbc.insets = new Insets(500, 150, 10, 50);
+        backgroundLabel.add(startButton, gbc);
+
+        JButton musicButton = new JButton(isMusicEnabled ? "Music On" : "Music Off");
+        musicButton.addActionListener(e -> {
+            isMusicEnabled = !isMusicEnabled;
+            musicButton.setText(isMusicEnabled ? "Music On" : "Music Off");
+        });
+        musicButton.setPreferredSize(new Dimension(100, 200));
+        gbc.gridy = 2;
+        gbc.insets = new Insets(-250, -350, 10, 10);
+        musicButton.setOpaque(false);
+        musicButton.setContentAreaFilled(false);
+        musicButton.setBorderPainted(false);
+        musicButton.setFocusPainted(false);
+        backgroundLabel.add(musicButton, gbc);
+
+        welcomePanel.add(backgroundLabel, BorderLayout.CENTER);
+    }
+
+    private JPanel createGamePanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        statusBar = new JLabel();
+        statusBar.setFont(FONT_STATUS);
+        statusBar.setBackground(COLOR_BG_STATUS);
+        statusBar.setOpaque(true);
+        statusBar.setPreferredSize(new Dimension(300, 30));
+        statusBar.setHorizontalAlignment(JLabel.LEFT);
+        statusBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 12));
+
+        panel.add(statusBar, BorderLayout.PAGE_END);
+        panel.setPreferredSize(new Dimension(Board.CANVAS_WIDTH, Board.CANVAS_HEIGHT + 30));
+        panel.setBorder(BorderFactory.createLineBorder(COLOR_BG_STATUS, 2, false));
+
+        board = new Board();
+        initGame();
+
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 int mouseX = e.getX();
                 int mouseY = e.getY();
-                int row = mouseY / Cell.SIZE;
                 int col = mouseX / Cell.SIZE;
 
                 if (currentState == State.PLAYING) {
-                    soundEffect.EAT_FOOD.play();
                     if (col >= 0 && col < Board.COLS) {
                         for (int rowI = Board.ROWS - 1; rowI >= 0; rowI--) {
                             if (board.cells[rowI][col].content == Seed.NO_SEED) {
                                 currentState = board.stepGame(currentPlayer, rowI, col);
-                                repaint(); // Ensure the board is updated before showing the dialog
+                                repaint();
                                 if (currentState == State.CROSS_WON || currentState == State.NOUGHT_WON) {
                                     String winner = (currentState == State.CROSS_WON) ? "Cross" : "Nought";
-//                                    soundEffect.WIN.play(); // Play the win sound once
                                     int response = JOptionPane.showConfirmDialog(
                                             ConnectFour.this,
                                             "Congrats! " + winner + " wins the game! Start a new game?",
@@ -54,7 +136,7 @@ public class ConnectFour extends JPanel {
                                             JOptionPane.INFORMATION_MESSAGE
                                     );
                                     if (response == JOptionPane.OK_OPTION) {
-                                        newGame(); // Start a new game
+                                        newGame();
                                     }
                                 }
                                 currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
@@ -69,83 +151,59 @@ public class ConnectFour extends JPanel {
             }
         });
 
-
-        // Setup the status bar (JLabel) to display status message
-        statusBar = new JLabel();
-        statusBar.setFont(FONT_STATUS);
-        statusBar.setBackground(COLOR_BG_STATUS);
-        statusBar.setOpaque(true);
-        statusBar.setPreferredSize(new Dimension(300, 30));
-        statusBar.setHorizontalAlignment(JLabel.LEFT);
-        statusBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 12));
-
-        super.setLayout(new BorderLayout());
-        super.add(statusBar, BorderLayout.PAGE_END); // same as SOUTH
-        super.setPreferredSize(new Dimension(Board.CANVAS_WIDTH, Board.CANVAS_HEIGHT + 30));
-        // account for statusBar in height
-        super.setBorder(BorderFactory.createLineBorder(COLOR_BG_STATUS, 2, false));
-
-        // Set up Game
-        initGame();
-        newGame();
+        panel.add(board);
+        return panel;
     }
 
-    /** Initialize the game (run once) */
-    public void initGame() {
-        board = new Board();  // allocate the game-board
+    private void initGame() {
+        currentPlayer = Seed.CROSS;
+        currentState = State.PLAYING;
     }
 
-    /** Reset the game-board contents and the current-state, ready for new game */
-    public void newGame() {
-        for (int row = 0; row < Board.ROWS; ++row) {
-            for (int col = 0; col < Board.COLS; ++col) {
-                board.cells[row][col].content = Seed.NO_SEED; // all cells empty
-            }
-        }
-        currentPlayer = Seed.CROSS;    // cross plays first
-        currentState = State.PLAYING;  // ready to play
+    private void newGame() {
+        board.newGame();
+        currentState = State.PLAYING;
+        currentPlayer = Seed.CROSS;
+        statusBar.setText("X's Turn");
     }
 
-    /** Custom painting codes on this JPanel */
     @Override
-    public void paintComponent(Graphics g) {  // Callback via repaint()
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        setBackground(COLOR_BG); // set its background color
+        setBackground(COLOR_BG);
 
-        board.paint(g);  // ask the game board to paint itself
+        board.paint(g);
 
-        // Print status-bar message
         if (currentState == State.PLAYING) {
             statusBar.setForeground(Color.BLACK);
             statusBar.setText((currentPlayer == Seed.CROSS) ? "X's Turn" : "O's Turn");
         } else if (currentState == State.DRAW) {
             statusBar.setForeground(Color.RED);
-            soundEffect.DIE.play();
             statusBar.setText("It's a Draw! Click to play again.");
         } else if (currentState == State.CROSS_WON) {
             statusBar.setForeground(Color.RED);
-            soundEffect.WIN.play();
             statusBar.setText("'X' Won! Click to play again.");
         } else if (currentState == State.NOUGHT_WON) {
             statusBar.setForeground(Color.RED);
-            soundEffect.WIN.play();
             statusBar.setText("'O' Won! Click to play again.");
         }
     }
 
-    /** The entry "main" method */
+    private void styleButton(JButton button) {
+        button.setFont(new Font("Arial", Font.BOLD, 18));
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+    }
+
     public static void play() {
-        // Run GUI construction codes in Event-Dispatching thread for thread safety
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                JFrame frame = new JFrame(TITLE);
-                // Set the content-pane of the JFrame to an instance of main JPanel
-                frame.setContentPane(new ConnectFour());
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.pack();
-                frame.setLocationRelativeTo(null); // center the application window
-                frame.setVisible(true);            // show it
-            }
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame(TITLE);
+            frame.setContentPane(new ConnectFour());
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
         });
     }
 }

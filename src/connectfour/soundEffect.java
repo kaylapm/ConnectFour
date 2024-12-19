@@ -17,7 +17,7 @@ import java.net.URL;
  */
 public enum soundEffect {
     EAT_FOOD("audio/mouse click.wav"),
-    EXPLODE("audio/mouse click.wav"),
+    BACKSOUND("audio/mouse click.wav"),
     WIN ("audio/violin-win-5-185128.wav"),
     DIE("audio/game-die.wav");
 
