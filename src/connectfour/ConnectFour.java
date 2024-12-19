@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Stack;
 
 public class ConnectFour extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -32,9 +31,6 @@ public class ConnectFour extends JPanel {
 
     private Timer timer;
     private int elapsedTime; // in seconds
-    private Timer animationTimer;
-
-    private Stack<int[]> moveHistory; // Stack to track move history
 
     public ConnectFour() {
         cardLayout = new CardLayout();
@@ -171,8 +167,6 @@ public class ConnectFour extends JPanel {
                     if (col >= 0 && col < Board.COLS) {
                         for (int rowI = Board.ROWS - 1; rowI >= 0; rowI--) {
                             if (board.cells[rowI][col].content == Seed.NO_SEED) {
-                                board.cells[rowI][col].content = currentPlayer;
-                                moveHistory.push(new int[]{rowI, col}); // Record the move
                                 currentState = board.stepGame(currentPlayer, rowI, col);
                                 repaint();
                                 if (currentState == State.CROSS_WON || currentState == State.NOUGHT_WON) {
@@ -205,54 +199,12 @@ public class ConnectFour extends JPanel {
         });
 
         panel.add(board, BorderLayout.CENTER); // Add the board to the panel
-
-        animationTimer = new Timer(30, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                board.repaint();
-                for (int row = 0; row < Board.ROWS; ++row) {
-                    for (int col = 0; col < Board.COLS; ++col) {
-                        board.cells[row][col].animate();
-                    }
-                }
-            }
-        });
-        animationTimer.start();
-
-        // Create a panel for buttons with FlowLayout
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        // Add Quit Game button
-        JButton quitButton = new JButton("Quit Game");
-        styleButton(quitButton);
-        quitButton.addActionListener(e -> System.exit(0)); // Exit the application
-        buttonPanel.add(quitButton);
-
-        // Add Undo button
-        JButton undoButton = new JButton("Undo");
-        styleButton(undoButton);
-        undoButton.addActionListener(e -> undoLastMove());
-        buttonPanel.add(undoButton);
-
-        panel.add(buttonPanel, BorderLayout.NORTH);
-
         return panel;
-    }
-
-    private void undoLastMove() {
-        if (!moveHistory.isEmpty()) {
-            int[] lastMove = moveHistory.pop();
-            board.cells[lastMove[0]][lastMove[1]].content = Seed.NO_SEED; // Clear the last move
-            currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS; // Switch back to the previous player
-            updateStatusBar();
-            repaint();
-        }
     }
 
     private void initGame() {
         currentPlayer = Seed.CROSS;
         currentState = State.PLAYING;
-        moveHistory = new Stack<>();
         updateStatusBar();
     }
 
@@ -261,7 +213,6 @@ public class ConnectFour extends JPanel {
         currentState = State.PLAYING;
         currentPlayer = Seed.CROSS;
         elapsedTime = 0;
-        moveHistory.clear();
         updateStatusBar();
     }
 
