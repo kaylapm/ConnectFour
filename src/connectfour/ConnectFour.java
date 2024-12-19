@@ -24,48 +24,51 @@ public class ConnectFour extends JPanel {
     private State currentState;  // the current state of the game
     private Seed currentPlayer;  // the current player
     private JLabel statusBar;    // for displaying status message
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
 
     /** Constructor to setup the UI and game components */
     public ConnectFour() {
-
-        // This JPanel fires MouseEvent
         super.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {  // mouse-clicked handler
+            public void mouseClicked(MouseEvent e) {
                 int mouseX = e.getX();
                 int mouseY = e.getY();
-                // Get the row and column clicked
                 int row = mouseY / Cell.SIZE;
                 int col = mouseX / Cell.SIZE;
 
                 if (currentState == State.PLAYING) {
                     soundEffect.EAT_FOOD.play();
                     if (col >= 0 && col < Board.COLS) {
-                        // Look for an empty cell starting from the bottom row
-                        for (int rowI = Board.ROWS -1; rowI >= 0; rowI--) {
+                        for (int rowI = Board.ROWS - 1; rowI >= 0; rowI--) {
                             if (board.cells[rowI][col].content == Seed.NO_SEED) {
-                                board.cells[rowI][col].content = currentPlayer; // Make a move
-                                board.stepGame(currentPlayer, rowI, col); // update state
-                                // Switch player
+                                currentState = board.stepGame(currentPlayer, rowI, col);
+                                repaint(); // Ensure the board is updated before showing the dialog
+                                if (currentState == State.CROSS_WON || currentState == State.NOUGHT_WON) {
+                                    String winner = (currentState == State.CROSS_WON) ? "Cross" : "Nought";
+//                                    soundEffect.WIN.play(); // Play the win sound once
+                                    int response = JOptionPane.showConfirmDialog(
+                                            ConnectFour.this,
+                                            "Congrats! " + winner + " wins the game! Start a new game?",
+                                            "Game Over",
+                                            JOptionPane.OK_CANCEL_OPTION,
+                                            JOptionPane.INFORMATION_MESSAGE
+                                    );
+                                    if (response == JOptionPane.OK_OPTION) {
+                                        newGame(); // Start a new game
+                                    }
+                                }
                                 currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
                                 break;
                             }
                         }
                     }
-//                    if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS
-//                            && board.cells[row][col].content == Seed.NO_SEED) {
-//                        // Update cells[][] and return the new game state after the move
-//                        currentState = board.stepGame(currentPlayer, row, col);
-//                        // Switch player
-//                        currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
-//                    }
-                } else {        // game over
-                    newGame();  // restart the game
+                } else {
+                    newGame();
                 }
-                // Refresh the drawing canvas
-                repaint();  // Callback paintComponent().
+                repaint();
             }
         });
+
 
         // Setup the status bar (JLabel) to display status message
         statusBar = new JLabel();

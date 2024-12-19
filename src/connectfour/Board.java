@@ -55,25 +55,12 @@ public class Board {
         // Update game board
         cells[selectedRow][selectedCol].content = player;
 
-        // Compute and return the new game state
-        if (cells[selectedRow][0].content == player  // 3-in-the-row
-                && cells[selectedRow][1].content == player
-                && cells[selectedRow][2].content == player
-                || cells[0][selectedCol].content == player // 3-in-the-column
-                && cells[1][selectedCol].content == player
-                && cells[2][selectedCol].content == player
-                || selectedRow == selectedCol     // 3-in-the-diagonal
-                && cells[0][0].content == player
-                && cells[1][1].content == player
-                && cells[2][2].content == player
-                || selectedRow + selectedCol == 2 // 3-in-the-opposite-diagonal
-                && cells[0][2].content == player
-                && cells[1][1].content == player
-                && cells[2][0].content == player) {
+        // Check for a win condition
+        if (checkWin(player, selectedRow, selectedCol)) {
             soundEffect.WIN.play();
             return (player == Seed.CROSS) ? State.CROSS_WON : State.NOUGHT_WON;
         } else {
-            // Nobody win. Check for DRAW (all cells occupied) or PLAYING.
+            // Check for DRAW (all cells occupied) or PLAYING.
             for (int row = 0; row < ROWS; ++row) {
                 for (int col = 0; col < COLS; ++col) {
                     if (cells[row][col].content == Seed.NO_SEED) {
@@ -83,6 +70,38 @@ public class Board {
             }
             return State.DRAW; // no empty cell, it's a draw
         }
+    }
+
+    private boolean checkWin(Seed player, int row, int col) {
+        return checkDirection(player, row, col, 1, 0) // Horizontal
+                || checkDirection(player, row, col, 0, 1) // Vertical
+                || checkDirection(player, row, col, 1, 1) // Diagonal \
+                || checkDirection(player, row, col, 1, -1); // Diagonal /
+    }
+
+    private boolean checkDirection(Seed player, int row, int col, int deltaRow, int deltaCol) {
+        int count = 0;
+        // Check in the positive direction
+        for (int i = 0; i < 4; i++) {
+            int r = row + i * deltaRow;
+            int c = col + i * deltaCol;
+            if (r >= 0 && r < ROWS && c >= 0 && c < COLS && cells[r][c].content == player) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        // Check in the negative direction
+        for (int i = 1; i < 4; i++) {
+            int r = row - i * deltaRow;
+            int c = col - i * deltaCol;
+            if (r >= 0 && r < ROWS && c >= 0 && c < COLS && cells[r][c].content == player) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count >= 4;
     }
 
     /** Paint itself on the graphics canvas, given the Graphics context */
