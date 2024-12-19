@@ -22,6 +22,9 @@ public class ConnectFour extends JPanel {
     private CardLayout cardLayout;
     private JPanel mainPanel;
     private JPanel welcomePanel;
+    private JPanel playerNamePanel;
+    private String player1Name = "Nought";
+    private String player2Name = "Cross";
     private boolean isMusicEnabled = true;
 
     public ConnectFour() {
@@ -29,9 +32,11 @@ public class ConnectFour extends JPanel {
         mainPanel = new JPanel(cardLayout);
 
         initWelcomePanel();
+        initPlayerNamePanel();
         JPanel gamePanel = createGamePanel();
 
         mainPanel.add(welcomePanel, "Welcome");
+        mainPanel.add(playerNamePanel, "PlayerNames");
         mainPanel.add(gamePanel, "Game");
 
         setLayout(new BorderLayout());
@@ -66,13 +71,9 @@ public class ConnectFour extends JPanel {
         startButton.setBorderPainted(false);
         startButton.setFocusPainted(false);
         startButton.addActionListener(e -> {
-            if (isMusicEnabled) {
-                soundEffect.BACKSOUND.play();
-            }
-            cardLayout.show(mainPanel, "Game");
-            newGame();
+            cardLayout.show(mainPanel, "PlayerNames");
             mainPanel.revalidate();
-            mainPanel.repaint(); // Ensure the game panel is repainted
+            mainPanel.repaint();
         });
 
         gbc.gridy = 1;
@@ -94,6 +95,42 @@ public class ConnectFour extends JPanel {
         backgroundLabel.add(musicButton, gbc);
 
         welcomePanel.add(backgroundLabel, BorderLayout.CENTER);
+    }
+
+    private void initPlayerNamePanel() {
+        playerNamePanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        JLabel player1Label = new JLabel("Player 1 Name:");
+        JTextField player1Field = new JTextField(10);
+        JLabel player2Label = new JLabel("Player 2 Name:");
+        JTextField player2Field = new JTextField(10);
+
+        JButton proceedButton = new JButton("Proceed to Game");
+        proceedButton.addActionListener(e -> {
+            player1Name = player1Field.getText().trim().isEmpty() ? "Nought" : player1Field.getText().trim();
+            player2Name = player2Field.getText().trim().isEmpty() ? "Cross" : player2Field.getText().trim();
+            cardLayout.show(mainPanel, "Game");
+            newGame();
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        });
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        playerNamePanel.add(player1Label, gbc);
+        gbc.gridx = 1;
+        playerNamePanel.add(player1Field, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        playerNamePanel.add(player2Label, gbc);
+        gbc.gridx = 1;
+        playerNamePanel.add(player2Field, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        playerNamePanel.add(proceedButton, gbc);
     }
 
     private JPanel createGamePanel() {
@@ -127,11 +164,11 @@ public class ConnectFour extends JPanel {
                                 currentState = board.stepGame(currentPlayer, rowI, col);
                                 repaint();
                                 if (currentState == State.CROSS_WON || currentState == State.NOUGHT_WON) {
-                                    String winner = (currentState == State.CROSS_WON) ? "Cross" : "Nought";
+                                    String winner = (currentState == State.CROSS_WON) ? player2Name : player1Name;
                                     int response = JOptionPane.showConfirmDialog(
                                             ConnectFour.this,
                                             "Congrats! " + winner + " wins the game! Start a new game?",
-                                            "Game Over",
+                                            "wohoo",
                                             JOptionPane.OK_CANCEL_OPTION,
                                             JOptionPane.INFORMATION_MESSAGE
                                     );
@@ -140,6 +177,7 @@ public class ConnectFour extends JPanel {
                                     }
                                 }
                                 currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+                                updateStatusBar();
                                 break;
                             }
                         }
@@ -151,20 +189,27 @@ public class ConnectFour extends JPanel {
             }
         });
 
-        panel.add(board);
+        panel.add(board, BorderLayout.CENTER); // Add the board to the panel
         return panel;
     }
 
     private void initGame() {
         currentPlayer = Seed.CROSS;
         currentState = State.PLAYING;
+        updateStatusBar();
     }
 
     private void newGame() {
         board.newGame();
         currentState = State.PLAYING;
         currentPlayer = Seed.CROSS;
-        statusBar.setText("X's Turn");
+        updateStatusBar();
+    }
+
+    private void updateStatusBar() {
+        if (currentState == State.PLAYING) {
+            statusBar.setText((currentPlayer == Seed.CROSS) ? player2Name + "'s Turn" : player1Name + "'s Turn");
+        }
     }
 
     @Override
@@ -176,16 +221,15 @@ public class ConnectFour extends JPanel {
 
         if (currentState == State.PLAYING) {
             statusBar.setForeground(Color.BLACK);
-            statusBar.setText((currentPlayer == Seed.CROSS) ? "X's Turn" : "O's Turn");
         } else if (currentState == State.DRAW) {
             statusBar.setForeground(Color.RED);
             statusBar.setText("It's a Draw! Click to play again.");
         } else if (currentState == State.CROSS_WON) {
             statusBar.setForeground(Color.RED);
-            statusBar.setText("'X' Won! Click to play again.");
+            statusBar.setText(player2Name + " Won! Click to play again.");
         } else if (currentState == State.NOUGHT_WON) {
             statusBar.setForeground(Color.RED);
-            statusBar.setText("'O' Won! Click to play again.");
+            statusBar.setText(player1Name + " Won! Click to play again.");
         }
     }
 
