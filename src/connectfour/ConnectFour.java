@@ -58,7 +58,7 @@ public class ConnectFour extends JPanel {
 
     private void initWelcomePanel() {
         welcomePanel = new JPanel(new BorderLayout());
-        ImageIcon backgroundIcon = new ImageIcon("src/images/welcome.png");
+        ImageIcon backgroundIcon = new ImageIcon("src/images/background.gif"); // Use background.gif
         JLabel backgroundLabel = new JLabel(backgroundIcon);
         backgroundLabel.setLayout(new GridBagLayout());
 
