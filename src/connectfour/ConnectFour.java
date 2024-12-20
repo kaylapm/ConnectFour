@@ -216,7 +216,7 @@ public class ConnectFour extends JPanel {
                                     int response = JOptionPane.showConfirmDialog(
                                             ConnectFour.this,
                                             "Congrats! " + winner + " wins the game in " + elapsedTime + " seconds! Start a new game?",
-                                            "Game Over",
+                                            "WooHHooOOo",
                                             JOptionPane.OK_CANCEL_OPTION,
                                             JOptionPane.INFORMATION_MESSAGE
                                     );
@@ -309,7 +309,15 @@ public class ConnectFour extends JPanel {
 
     private void updateStatusBar() {
         if (currentState == State.PLAYING) {
-            statusBar.setText((currentPlayer == Seed.CROSS ? player2Name : player1Name) + "'s Turn | Time: " + elapsedTime + "s");
+            String playerPiece = (currentPlayer == Seed.CROSS) ? "Sun" : "Ball";
+            String currentPlayerName = (currentPlayer == Seed.CROSS) ? player2Name : player1Name;
+            statusBar.setText(currentPlayerName + "'s Turn (" + playerPiece + ") | Time: " + elapsedTime + "s");
+        } else if (currentState == State.DRAW) {
+            statusBar.setText("It's a Draw! Click to play again.");
+        } else if (currentState == State.CROSS_WON) {
+            statusBar.setText(player2Name + " Won! (Sun) Click to play again.");
+        } else if (currentState == State.NOUGHT_WON) {
+            statusBar.setText(player1Name + " Won! (Ball) Click to play again.");
         }
     }
 
