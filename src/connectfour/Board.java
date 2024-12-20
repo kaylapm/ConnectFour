@@ -109,6 +109,7 @@ public class Board extends JPanel {
         return count >= 4;
     }
 
+
     /** Paint itself on the graphics canvas, given the Graphics context */
     @Override
     public void paintComponent(Graphics g) {
