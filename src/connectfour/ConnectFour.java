@@ -157,7 +157,6 @@ public class ConnectFour extends JPanel {
 
         playerNamePanel.add(backgroundLabel, BorderLayout.CENTER);
     }
-
     private JPanel createGamePanel() {
         JPanel panel = new JPanel(new BorderLayout());
         statusBar = new JLabel();
@@ -172,15 +171,36 @@ public class ConnectFour extends JPanel {
         panel.setPreferredSize(new Dimension(Board.CANVAS_WIDTH, Board.CANVAS_HEIGHT + 30));
         panel.setBorder(BorderFactory.createLineBorder(COLOR_BG_STATUS, 2, false));
 
+        // Load the background image
+        ImageIcon backgroundIcon = new ImageIcon("src/images/play.png");
+        JLabel backgroundLabel = new JLabel(backgroundIcon);
+        backgroundLabel.setLayout(new GridBagLayout());
+
+        // Create a panel to hold the board and center it
+        JPanel boardPanel = new JPanel();
+        boardPanel.setOpaque(false); // Make the board panel transparent
+        boardPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+
         board = new Board();
         initGame();
+        boardPanel.add(board, gbc);
+
+        backgroundLabel.add(boardPanel, gbc);
+        panel.add(backgroundLabel, BorderLayout.CENTER);
 
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int mouseX = e.getX();
-                int mouseY = e.getY();
-                int col = mouseX / Cell.SIZE;
+                // Calculate the horizontal offset if the board is centered
+                int horizontalOffset = (panel.getWidth() - Board.CANVAS_WIDTH) / 2;
+                int mouseX = e.getX() - horizontalOffset; // Adjust for horizontal offset
+                int col = mouseX / Cell.SIZE; // Calculate the column based on adjusted mouse X position
+
+
 
                 if (currentState == State.PLAYING) {
                     if (col >= 0 && col < Board.COLS) {
@@ -218,8 +238,6 @@ public class ConnectFour extends JPanel {
                 repaint();
             }
         });
-
-        panel.add(board, BorderLayout.CENTER); // Add the board to the panel
 
         animationTimer = new Timer(30, new ActionListener() {
             @Override

@@ -20,7 +20,7 @@ public class Cell {
 
     public void newGame() {
         content = Seed.NO_SEED;
-        animationY = -SEED_SIZE;
+        resetAnimation();
     }
 
     public void paint(Graphics g) {
@@ -32,12 +32,12 @@ public class Cell {
     }
 
     public void animate() {
-        if (animationY < row * SIZE + PADDING) {
-            animationY += 10; // Adjust speed as needed
+        int targetY = row * SIZE + PADDING;
+        if (animationY < targetY) {
+            animationY += Math.min(10, targetY - animationY); // Adjust speed as needed
         }
     }
 
-    // Add a setter method for animationY
     public void resetAnimation() {
         this.animationY = -SEED_SIZE;
     }
