@@ -1,3 +1,13 @@
+/**
+ * ES234317-Algorithm and Data Structures
+ * Semester Ganjil, 2024/2025
+ * Group Capstone Project
+ * Group #5
+ * 1 - 5026231158 - Kayla Putri Maharani
+ * 2 - 5026231170 - Tahiyyah Mufhimah
+ * 3 - 5026231206 - Rafael Dimas K
+ */
+
 package connectfour;
 
 import javax.swing.*;
@@ -31,10 +41,10 @@ public class ConnectFour extends JPanel {
     private boolean isMusicEnabled = true;
 
     private Timer timer;
-    private int elapsedTime; // in seconds
+    private int elapsedTime;
     private Timer animationTimer;
 
-    private Stack<int[]> moveHistory; // Stack to track move history
+    private Stack<int[]> moveHistory;
 
     public ConnectFour() {
         cardLayout = new CardLayout();
@@ -52,16 +62,15 @@ public class ConnectFour extends JPanel {
         add(mainPanel, BorderLayout.CENTER);
 
         cardLayout.show(mainPanel, "Welcome");
-        soundEffect.initGame(); // Pre-load sound files
-
+        soundEffect.initGame();
         if (isMusicEnabled) {
-            soundEffect.BACKSOUND.loop(); // Start playing the background sound
+            soundEffect.BACKSOUND.loop();
         }
     }
 
     private void initWelcomePanel() {
         welcomePanel = new JPanel(new BorderLayout());
-        ImageIcon backgroundIcon = new ImageIcon("src/images/background.gif"); // Use background.gif
+        ImageIcon backgroundIcon = new ImageIcon("src/images/background.gif");
         JLabel backgroundLabel = new JLabel(backgroundIcon);
         backgroundLabel.setLayout(new GridBagLayout());
 
@@ -89,14 +98,14 @@ public class ConnectFour extends JPanel {
         });
 
         gbc.gridy = 1;
-        gbc.insets = new Insets(500, 150, 10, 50);
+        gbc.insets = new Insets(600, 50, 10, 50);
         backgroundLabel.add(startButton, gbc);
 
 
-        JButton musicButton = new JButton(isMusicEnabled ? "Music On" : "Music Off");
+        JButton musicButton = new JButton(isMusicEnabled ? " " : " ");
         musicButton.addActionListener(e -> {
             isMusicEnabled = !isMusicEnabled;
-            musicButton.setText(isMusicEnabled ? "Music On" : "Music Off");
+            musicButton.setText(isMusicEnabled ? " " : " ");
             if (isMusicEnabled) {
                 soundEffect.BACKSOUND.loop();
             } else {
@@ -105,7 +114,7 @@ public class ConnectFour extends JPanel {
         });
         musicButton.setPreferredSize(new Dimension(100, 200));
         gbc.gridy = 2;
-        gbc.insets = new Insets(-250, -350, 10, 10);
+        gbc.insets = new Insets(-100, -850, 10, 10);
         musicButton.setOpaque(false);
         musicButton.setContentAreaFilled(false);
         musicButton.setBorderPainted(false);
@@ -121,15 +130,51 @@ public class ConnectFour extends JPanel {
         JLabel backgroundLabel = new JLabel(backgroundIcon);
         backgroundLabel.setLayout(new GridBagLayout());
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        JLabel player1Label = new JLabel(" ");
+        JTextField player1Field = new JTextField(20);
+        player1Field.setPreferredSize(new Dimension(200, 50));
+        player1Field.setOpaque(false);
+        player1Field.setBorder(BorderFactory.createEmptyBorder());
+        player1Field.setFont(new Font("Arial", Font.PLAIN, 18)); // Adjust font size as needed
 
-        JLabel player1Label = new JLabel("Player 1 Name:");
-        JTextField player1Field = new JTextField(10);
-        JLabel player2Label = new JLabel("Player 2 Name:");
-        JTextField player2Field = new JTextField(10);
 
-        JButton proceedButton = new JButton("Proceed to Game");
+        GridBagConstraints gbc1 = new GridBagConstraints();
+        gbc1.gridx = 0;
+        gbc1.gridy = 0;
+        gbc1.anchor = GridBagConstraints.WEST;
+        gbc1.insets = new Insets(20, 20, 10, 10);
+        backgroundLabel.add(player1Label, gbc1);
+
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.gridx = 1;
+        gbc2.gridy = 0;
+        gbc2.anchor = GridBagConstraints.CENTER;
+        gbc2.insets = new Insets(20, 10, 10, 20);
+        backgroundLabel.add(player1Field, gbc2);
+
+        JLabel player2Label = new JLabel(" ");
+        JTextField player2Field = new JTextField(20);
+        player2Field.setPreferredSize(new Dimension(200, 50));
+        player2Field.setOpaque(false);
+        player2Field.setBorder(BorderFactory.createEmptyBorder());
+        player2Field.setFont(new Font("Arial", Font.PLAIN, 18)); // Adjust font size as needed
+
+
+        GridBagConstraints gbc3 = new GridBagConstraints();
+        gbc3.gridx = 0;
+        gbc3.gridy = 1;
+        gbc3.anchor = GridBagConstraints.WEST;
+        gbc3.insets = new Insets(10, 20, 20, 10);
+        backgroundLabel.add(player2Label, gbc3);
+
+        GridBagConstraints gbc4 = new GridBagConstraints();
+        gbc4.gridx = 1;
+        gbc4.gridy = 1;
+        gbc4.anchor = GridBagConstraints.CENTER;
+        gbc4.insets = new Insets(10, 10, 20, 20); // Adjust margins as needed
+        backgroundLabel.add(player2Field, gbc4);
+
+        JButton proceedButton = new JButton(" ");
         proceedButton.addActionListener(e -> {
             player1Name = player1Field.getText().trim().isEmpty() ? "Nought" : player1Field.getText().trim();
             player2Name = player2Field.getText().trim().isEmpty() ? "Cross" : player2Field.getText().trim();
@@ -140,20 +185,19 @@ public class ConnectFour extends JPanel {
             mainPanel.repaint();
         });
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        backgroundLabel.add(player1Label, gbc);
-        gbc.gridx = 1;
-        backgroundLabel.add(player1Field, gbc);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        backgroundLabel.add(player2Label, gbc);
-        gbc.gridx = 1;
-        backgroundLabel.add(player2Field, gbc);
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        backgroundLabel.add(proceedButton, gbc);
+        proceedButton.setPreferredSize(new Dimension(180, 100));
+        proceedButton.setOpaque(false);
+        proceedButton.setContentAreaFilled(false);
+        proceedButton.setBorderPainted(false);
+        proceedButton.setFocusPainted(false);
+
+        GridBagConstraints gbc5 = new GridBagConstraints();
+        gbc5.gridx = 0;
+        gbc5.gridy = 2;
+        gbc5.gridwidth = 2;
+        gbc5.anchor = GridBagConstraints.CENTER;
+        gbc5.insets = new Insets(20, 0, 0, 0);
+        backgroundLabel.add(proceedButton, gbc5);
 
         playerNamePanel.add(backgroundLabel, BorderLayout.CENTER);
     }
@@ -171,14 +215,12 @@ public class ConnectFour extends JPanel {
         panel.setPreferredSize(new Dimension(Board.CANVAS_WIDTH, Board.CANVAS_HEIGHT + 30));
         panel.setBorder(BorderFactory.createLineBorder(COLOR_BG_STATUS, 2, false));
 
-        // Load the background image
         ImageIcon backgroundIcon = new ImageIcon("src/images/play.png");
         JLabel backgroundLabel = new JLabel(backgroundIcon);
         backgroundLabel.setLayout(new GridBagLayout());
 
-        // Create a panel to hold the board and center it
         JPanel boardPanel = new JPanel();
-        boardPanel.setOpaque(false); // Make the board panel transparent
+        boardPanel.setOpaque(false);
         boardPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -195,19 +237,16 @@ public class ConnectFour extends JPanel {
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Calculate the horizontal offset if the board is centered
                 int horizontalOffset = (panel.getWidth() - Board.CANVAS_WIDTH) / 2;
-                int mouseX = e.getX() - horizontalOffset; // Adjust for horizontal offset
-                int col = mouseX / Cell.SIZE; // Calculate the column based on adjusted mouse X position
-
-
+                int mouseX = e.getX() - horizontalOffset;
+                int col = mouseX / Cell.SIZE;
 
                 if (currentState == State.PLAYING) {
                     if (col >= 0 && col < Board.COLS) {
                         for (int rowI = Board.ROWS - 1; rowI >= 0; rowI--) {
                             if (board.cells[rowI][col].content == Seed.NO_SEED) {
                                 board.cells[rowI][col].content = currentPlayer;
-                                moveHistory.push(new int[]{rowI, col}); // Record the move
+                                moveHistory.push(new int[]{rowI, col});
                                 currentState = board.stepGame(currentPlayer, rowI, col);
                                 repaint();
                                 if (currentState == State.CROSS_WON || currentState == State.NOUGHT_WON) {
@@ -222,7 +261,7 @@ public class ConnectFour extends JPanel {
                                     );
                                     if (response == JOptionPane.OK_OPTION) {
                                         newGame();
-                                        startTimer(); // Restart the timer for the new game
+                                        startTimer();
                                     }
                                 }
                                 currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
@@ -233,7 +272,7 @@ public class ConnectFour extends JPanel {
                     }
                 } else {
                     newGame();
-                    startTimer(); // Restart the timer for the new game
+                    startTimer();
                 }
                 repaint();
             }
@@ -252,7 +291,6 @@ public class ConnectFour extends JPanel {
         });
         animationTimer.start();
 
-        // Create a panel for buttons with FlowLayout
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         // Add New Game button
@@ -260,17 +298,16 @@ public class ConnectFour extends JPanel {
         styleButton(newGameButton);
         newGameButton.addActionListener(e -> {
             newGame();
-            startTimer(); // Restart the timer for the new game
+            startTimer();
         });
         buttonPanel.add(newGameButton);
 
-        // Add Quit Game button
+
         JButton quitButton = new JButton("Quit Game");
         styleButton(quitButton);
-        quitButton.addActionListener(e -> System.exit(0)); // Exit the application
+        quitButton.addActionListener(e -> System.exit(0));
         buttonPanel.add(quitButton);
 
-        // Add Undo button
         JButton undoButton = new JButton("Undo");
         styleButton(undoButton);
         undoButton.addActionListener(e -> undoLastMove());
@@ -284,8 +321,8 @@ public class ConnectFour extends JPanel {
     private void undoLastMove() {
         if (!moveHistory.isEmpty()) {
             int[] lastMove = moveHistory.pop();
-            board.cells[lastMove[0]][lastMove[1]].content = Seed.NO_SEED; // Clear the last move
-            currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS; // Switch back to the previous player
+            board.cells[lastMove[0]][lastMove[1]].content = Seed.NO_SEED;
+            currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
             updateStatusBar();
             repaint();
         }
@@ -327,7 +364,7 @@ public class ConnectFour extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 elapsedTime++;
-                updateStatusBar(); // Update the status bar every second
+                updateStatusBar();
             }
         });
         timer.start();

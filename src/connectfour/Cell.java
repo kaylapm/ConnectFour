@@ -1,3 +1,13 @@
+/**
+ * ES234317-Algorithm and Data Structures
+ * Semester Ganjil, 2024/2025
+ * Group Capstone Project
+ * Group #5
+ * 1 - 5026231158 - Kayla Putri Maharani
+ * 2 - 5026231170 - Tahiyyah Mufhimah
+ * 3 - 5026231206 - Rafael Dimas K
+ */
+
 package connectfour;
 
 import java.awt.*;
@@ -9,13 +19,13 @@ public class Cell {
 
     Seed content;
     int row, col;
-    private int animationY; // Y position for animation
+    private int animationY;
 
     public Cell(int row, int col) {
         this.row = row;
         this.col = col;
         content = Seed.NO_SEED;
-        animationY = -SEED_SIZE; // Start above the cell
+        animationY = -SEED_SIZE;
     }
 
     public void newGame() {
@@ -34,7 +44,7 @@ public class Cell {
     public void animate() {
         int targetY = row * SIZE + PADDING;
         if (animationY < targetY) {
-            animationY += Math.min(10, targetY - animationY); // Adjust speed as needed
+            animationY += Math.min(10, targetY - animationY);
         }
     }
 

@@ -1,32 +1,27 @@
+/**
+ * ES234317-Algorithm and Data Structures
+ * Semester Ganjil, 2024/2025
+ * Group Capstone Project
+ * Group #5
+ * 1 - 5026231158 - Kayla Putri Maharani
+ * 2 - 5026231170 - Tahiyyah Mufhimah
+ * 3 - 5026231206 - Rafael Dimas K
+ */
+
 package connectfour;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-    /**
-     * This enum is used by:
-     * 1. Player: takes value of CROSS or NOUGHT
-     * 2. Cell content: takes value of CROSS, NOUGHT, or NO_SEED.
-     * <p>
-     * We also attach a display image icon (text or image) for the items.
-     * and define the related variable/constructor/getter.
-     * To draw the image:
-     * g.drawImage(content.getImage(), x, y, width, height, null);
-     * <p>
-     * Ideally, we should define two enums with inheritance, which is,
-     * however, not supported.
-     */
-    public enum Seed {   // to save as "Seed.java"
-        CROSS("X", "images/sun.png"),   // displayName, imageFilename
+    public enum Seed {
+        CROSS("X", "images/sun.png"),
         NOUGHT("O", "images/ball.png"),
         NO_SEED(" ", null);
 
-        // Private variables
         private String displayName;
         private Image img = null;
 
-        // Constructor (must be private)
         private Seed(String name, String imageFilename) {
             this.displayName = name;
 
@@ -35,7 +30,6 @@ import java.net.URL;
                 ImageIcon icon = null;
                 if (imgURL != null) {
                     icon = new ImageIcon(imgURL);
-                    //System.out.println(icon);  // debugging
                 } else {
                     System.err.println("Couldn't find file " + imageFilename);
                 }
@@ -43,7 +37,6 @@ import java.net.URL;
             }
         }
 
-        // Public getters
         public String getDisplayName() {
             return displayName;
         }
