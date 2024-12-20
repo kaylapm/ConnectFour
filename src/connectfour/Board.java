@@ -22,6 +22,7 @@ public class Board extends JPanel {
     /** Composes of 2D array of ROWS-by-COLS Cell instances */
     Cell[][] cells;
 
+
     /** Constructor to initialize the game board */
     public Board() {
         setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
@@ -112,6 +113,8 @@ public class Board extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+
         // Draw the grid-lines
         g.setColor(COLOR_GRID);
         for (int row = 1; row < ROWS; ++row) {
