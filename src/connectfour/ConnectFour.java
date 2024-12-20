@@ -237,6 +237,7 @@ public class ConnectFour extends JPanel {
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                soundEffect.EAT_FOOD.play();
                 int horizontalOffset = (panel.getWidth() - Board.CANVAS_WIDTH) / 2;
                 int mouseX = e.getX() - horizontalOffset;
                 int col = mouseX / Cell.SIZE;
@@ -245,6 +246,7 @@ public class ConnectFour extends JPanel {
                     if (col >= 0 && col < Board.COLS) {
                         for (int rowI = Board.ROWS - 1; rowI >= 0; rowI--) {
                             if (board.cells[rowI][col].content == Seed.NO_SEED) {
+                                soundEffect.EAT_FOOD.play();
                                 board.cells[rowI][col].content = currentPlayer;
                                 moveHistory.push(new int[]{rowI, col});
                                 currentState = board.stepGame(currentPlayer, rowI, col);
