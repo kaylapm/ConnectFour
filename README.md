@@ -6,6 +6,9 @@ Group 5
  * 2 - 5026231170 - Tahiyyah Mufhimah
  * 3 - 5026231206 - Rafael Dimas
 
+Link YouTube Demo :
+https://youtu.be/VIb5UU1hmb4
+
 Pada game Connect Four ini, kami membuat fitur tambahan berupa :
 1. Menambahkan welcome panel
 2. Menambahkan welcome page dengan gambar
